@@ -1,31 +1,18 @@
-import httpx
 from bs4 import BeautifulSoup, PageElement
-from models import Vacancy
-import asyncio
-from config import DEFAULT_TIMEOUT
+from sites.base import SiteBase
+from typing import List, Dict
 import unicodedata
 
 
-class JobsDouUA:
+class JobsDouUA(SiteBase):
     main_url = "https://jobs.dou.ua/vacancies/?city=%D0%9A%D0%B8%D0%B5%D0%B2&category=Python"
 
-    async def run_parser(self):
-        while True:
-            await self.__parse()
-            await asyncio.sleep(DEFAULT_TIMEOUT)
-
-    async def __parse(self):
-        async with httpx.AsyncClient() as client:
-            r = await client.get(self.main_url)
-            soup = BeautifulSoup(r.text, 'html.parser')
-
-            for i in soup.find_all("div", {"class": "vacancy"}):
-                data = self.__format_vacancy(i)
-                if not await Vacancy.filter(**data):
-                    await Vacancy.create(**data)
+    def _format_vacancies(self, data_from_site) -> List[Dict]:
+        return [self._format_vacancy(i) for i in
+                BeautifulSoup(data_from_site.text, 'html.parser').find_all("div", {"class": "vacancy"})]
 
     @staticmethod
-    def __format_vacancy(item: PageElement):
+    def _format_vacancy(item: PageElement):
         data = {
             "site_id": int(item["_id"]),
             "title": item.find_next("a", {"class": "vt"}).get_text(),

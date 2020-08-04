@@ -1,32 +1,20 @@
-import httpx
 from bs4 import BeautifulSoup, PageElement
-from models import Vacancy
-import asyncio
-from config import DEFAULT_TIMEOUT
+from sites.base import SiteBase
+from typing import List, Dict
 import unicodedata
 import re
 
-class GrcUA:
+
+class GrcUA(SiteBase):
     main_url = "https://grc.ua/search/vacancy?" \
                "order_by=publication_time&clusters=true&area=115&text=python&enable_snippets=true"
 
-    async def run_parser(self):
-        while True:
-            await self.__parse()
-            await asyncio.sleep(DEFAULT_TIMEOUT)
-
-    async def __parse(self):
-        async with httpx.AsyncClient() as client:
-            r = await client.get(self.main_url)
-            soup = BeautifulSoup(r.text, 'html.parser')
-
-            for i in soup.find_all("div", {"class": "vacancy-serp-item"}):
-                data = self.__format_vacancy(i)
-                if not await Vacancy.filter(**data):
-                    await Vacancy.create(**data)
+    def _format_vacancies(self, data_from_site) -> List[Dict]:
+        return [self._format_vacancy(i) for i in
+                BeautifulSoup(data_from_site.text, 'html.parser').find_all("div", {"class": "vacancy-serp-item"})]
 
     @staticmethod
-    def __format_vacancy(item: PageElement):
+    def _format_vacancy(item: PageElement):
         data = {
             "site_id": int(re.findall("\d+", item.find_next("a", {"class": "bloko-link"})['href'])[0]),
             "title": item.find_next("a", {"class": "bloko-link"}).get_text(),

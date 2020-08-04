@@ -1,30 +1,17 @@
-import httpx
 from bs4 import BeautifulSoup, PageElement
-from models import Vacancy
-import asyncio
-from config import DEFAULT_TIMEOUT
+from sites.base import SiteBase
+from typing import List, Dict
 
 
-class RobotaUA:
+class RobotaUA(SiteBase):
     main_url = "https://rabota.ua/jobsearch/vacancy_list?keyWords=python&regionId=1"
 
-    async def run_parser(self):
-        while True:
-            await self.__parse()
-            await asyncio.sleep(DEFAULT_TIMEOUT)
-
-    async def __parse(self):
-        async with httpx.AsyncClient() as client:
-            r = await client.get(self.main_url)
-            soup = BeautifulSoup(r.text, 'html.parser')
-
-            for i in soup.find_all("article", {"class": "card"}):
-                data = self.__format_vacancy(i)
-                if not await Vacancy.filter(**data):
-                    await Vacancy.create(**data)
+    def _format_vacancies(self, data_from_site) -> List[Dict]:
+        return [self._format_vacancy(i) for i in
+                BeautifulSoup(data_from_site.text, 'html.parser').find_all("article", {"class": "card"})]
 
     @staticmethod
-    def __format_vacancy(item: PageElement):
+    def _format_vacancy(item: PageElement):
         data = {
             "site_id": int(item["data-vacancy-id"]),
             "title": item.find_next("a", {"class": "ga_listing"}).get_text().replace("\n", ""),
