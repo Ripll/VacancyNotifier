@@ -1,0 +1,7 @@
+aiogram
+tortoise-orm
+aiosqlite
+python-dotenv
+loguru
+httpx
+bs4
