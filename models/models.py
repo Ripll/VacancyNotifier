@@ -2,8 +2,9 @@ from tortoise.models import Model
 from tortoise import fields, BaseDBAsyncClient
 from typing import List, Optional, Type
 from tortoise.signals import post_save
-from config import bot, CHAT_ID, logger
+from config import bot, CHAT_ID, logger, START_TIME
 from msg import VacancyMsg
+from datetime import datetime, timedelta
 
 
 class Vacancy(Model):
@@ -31,6 +32,7 @@ async def signal_post_save(
 ) -> None:
     msg = VacancyMsg.def_msg(instance)
     try:
-        await bot.send_message(CHAT_ID, msg, parse_mode="html", disable_web_page_preview=True)
+        if datetime.now() - START_TIME > timedelta(minutes=2):
+            await bot.send_message(CHAT_ID, msg, parse_mode="html", disable_web_page_preview=True)
     except Exception as e:
         logger.info("Flood wait.")
