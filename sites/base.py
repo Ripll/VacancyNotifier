@@ -1,5 +1,6 @@
 import asyncio
 import sys
+import traceback
 import httpx
 from config import logger, DEFAULT_TIMEOUT
 from models.models import Vacancy
@@ -35,7 +36,7 @@ class SiteBase:
                 r = await client.get(self.main_url)
                 return r
             except Exception as e:
-                logger.info(f"Error in {self.classname} while making request.")
+                logger.error(f"Error in {self.classname} while making request. {traceback.format_exc()}")
 
     def _format_vacancies(self, data_from_site) -> List[Dict]:
         pass
