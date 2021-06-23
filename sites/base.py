@@ -1,9 +1,9 @@
+import asyncio
+import sys
+import httpx
 from config import logger, DEFAULT_TIMEOUT
 from models.models import Vacancy
 from typing import Dict, List
-import asyncio
-import httpx
-
 
 class SiteBase:
     main_url = "https://google.com"
@@ -13,7 +13,10 @@ class SiteBase:
 
     async def run_parser(self):
         while True:
-            await self.__parse()
+            try:
+                await self.__parse()
+            except:
+                logger.info(f"BaseParser: {str(sys.exc_info()[0])} {str(sys.exc_info()[1])}")
             await asyncio.sleep(DEFAULT_TIMEOUT)
 
     async def __parse(self):
