@@ -9,7 +9,8 @@ from typing import List, Dict
 
 
 class WorkUA(SiteBase):
-    main_url = "https://www.work.ua/jobs-kyiv-python/"
+    base_url = "https://www.work.ua/"
+    add_to_url = "jobs-{city}-{query}/"
 
     def _format_vacancies(self, data_from_site) -> List[Dict]:
         return [self._format_vacancy(i) for i in

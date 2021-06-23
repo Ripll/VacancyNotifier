@@ -5,7 +5,8 @@ import unicodedata
 
 
 class JobsDouUA(SiteBase):
-    main_url = "https://jobs.dou.ua/vacancies/?city=%D0%9A%D0%B8%D0%B5%D0%B2&category=Python"
+    base_url = "https://jobs.dou.ua/vacancies/?"
+    add_to_url = "city={city}&category={query}"
 
     def _format_vacancies(self, data_from_site) -> List[Dict]:
         return [self._format_vacancy(i) for i in

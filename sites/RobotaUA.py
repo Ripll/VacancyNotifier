@@ -4,7 +4,11 @@ from typing import List, Dict
 
 
 class RobotaUA(SiteBase):
-    main_url = "https://rabota.ua/jobsearch/vacancy_list?keyWords=python&regionId=1"
+    base_url = "https://rabota.ua/zapros/"
+    add_to_url = "{query}/{city}"
+    cities = {
+        "Kyiv": "киев"
+    }
 
     def _format_vacancies(self, data_from_site) -> List[Dict]:
         return [self._format_vacancy(i) for i in

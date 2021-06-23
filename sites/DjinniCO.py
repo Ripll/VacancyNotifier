@@ -3,7 +3,8 @@ from sites.base import SiteBase
 
 
 class DjinniCO(SiteBase):
-    main_url = "https://djinni.co/api/jobs/?offset=0&limit=10&query=Python Kyiv"
+    base_url = "https://djinni.co/api/jobs/?offset=0&limit=10&query="
+    add_to_url = "{query} {city}"
 
     def _format_vacancies(self, data_from_site) -> List[Dict]:
         return [self._format_vacancy(i) for i in data_from_site.json()['results']]

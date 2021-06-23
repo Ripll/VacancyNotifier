@@ -6,8 +6,11 @@ import re
 
 
 class GrcUA(SiteBase):
-    main_url = "https://grc.ua/search/vacancy?" \
-               "order_by=publication_time&clusters=true&area=115&text=python&enable_snippets=true"
+    base_url = "https://grc.ua/search/vacancy?order_by=publication_time&clusters=true"
+    add_to_url = "&area={city}&text={query}&enable_snippets=true"
+    cities = {
+        "Kyiv": "115"
+    }
 
     def _format_vacancies(self, data_from_site) -> List[Dict]:
         return [self._format_vacancy(i) for i in
