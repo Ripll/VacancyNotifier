@@ -4,5 +4,5 @@ class VacancyMsg:
         msg = f"<b>{item.title}</b>\n" \
               f"<i>{item.company}</i> - {item.city}  <b>{a if (a := item.salary) else ''}</b>\n\n" \
               f"{item.desc}\n" \
-              f"{item.link}"
+              f"<a href='{item.link}'>Откликнуться</a>"
         return msg
