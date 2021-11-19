@@ -24,10 +24,10 @@ class GrcUA(SiteBase):
             "company": item.find_next("a", {"data-qa": "vacancy-serp__vacancy-employer"}).get_text(),
             "desc": " ".join(unicodedata.normalize("NFKD",
                                                    item.find_next("div", {"class": "g-user-content"}).get_text()).split()),
-            "salary": unicodedata.normalize("NFKD", a) if
+            "salary": unicodedata.normalize("NFKD", a.get_text()) if
                                 (a := item.find_next("div",
-                                                          {"class": "vacancy-serp-item__sidebar"}).get_text()) else None,
-            "city": item.find_next("span", {"data-qa": "vacancy-serp__vacancy-address"}).get_text(),
+                                                    {"class": "vacancy-serp-item__sidebar"})) else None,
+            "city": item.find_next("div", {"data-qa": "vacancy-serp__vacancy-address"}).get_text(),
             "link": item.find_next("a", {"class": "bloko-link"})['href']
 
         }

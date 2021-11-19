@@ -47,7 +47,7 @@ class SiteBase:
                             vacancy = await Vacancy.create(site=self.classname, **data)
                             try:
                                 msg = VacancyMsg.def_msg(vacancy)
-                                logger.info(msg)
+                                logger.info(vacancy)
                                 if datetime.now() - START_TIME > timedelta(minutes=2):
                                     await bot.send_message(chat_id,
                                                            msg,
